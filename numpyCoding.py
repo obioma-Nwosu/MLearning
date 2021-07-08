@@ -2,9 +2,11 @@
 """
 Created on Wed May 12 10:25:06
 
-@author: z004axxc
+@author: Obioma Nwosu
 
 numpy coding
+
+use ctrl + I to check documentation for package
 """
 
 import numpy as np

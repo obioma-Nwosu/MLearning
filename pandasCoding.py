@@ -8,6 +8,8 @@ Created on Wed Jun 16 11:18:27 2021
 """
 Pandas(Panel data) designed for working with
 DataFrames and Series
+
+use ctrl + I to check documentation for package
 """
 
 import pandas as pd
