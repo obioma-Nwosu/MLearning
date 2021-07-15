@@ -10,6 +10,8 @@ Data pre-processing in Machine learning
 import pandas as pd
 import seaborn as sn
 import numpy as np
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import minmax_scale, normalize
 
 # The reason the full path of the data is not given is because we
 # set the console as the working directory using the hamburger menu
@@ -78,3 +80,84 @@ Data_Set7.dropna(axis=0, inplace=True)
 # ffill will use data before nan to fill NAN
 # bfill will use the data after nan to fill NAN
 Data_Set8 = Data_Set7.fillna(method='ffill')
+
+# using ScikitLearn to fill data of nan values with specific numbers
+M_var = SimpleImputer(missing_values=np.nan, strategy='mean')
+M_var.fit(Data_Set7)
+
+# Transform this new DataSet
+Data_Set9 = M_var.transform(Data_Set7)
+
+"""""
+OUTLIER DETECTION
+"""""
+
+# show box plot to see outlier
+Data_Set8.boxplot()
+
+# The mathematics involved in outliers as explained in the note
+Data_Set8['E_Plug'].quantile(0.25)
+Data_Set8['E_Plug'].quantile(0.75)
+
+"""
+
+# the calculations in comment
+# q1 = 19.75 from python
+# q3 = 32.25 from python
+# IQR = 32.25 - 19.75 = 12.5
+
+Mild outlier
+
+lower Bound = q1 - 1.5 * IQR = 19.75 - 1.5 * 12.5 = 1
+Upper Bound = q3 + 1.5 * IQR = 32.25 + 1.5 * 12.5 = 51
+
+EXtreme Outlier
+
+Upper Bound = Q3 + 3*IQR = 32.25 + 3*12.5 = 69.75
+following the result from the box plot we can see that we have a result 120
+which is way above the xtreme outlier hence could be an outlier
+
+"""
+# Replacing the Outlier
+Data_Set8['E_Plug'].replace(120, 42, inplace=True)
+
+"""
+CONCATENATION...
+
+attaching datasets from rows and columns
+
+for column-wise concatenation you use axis=1
+
+for row-wise concatenation you use axis=0
+
+"""
+new_col = pd.read_csv('Data_New.csv')
+
+# actual concatenation
+Data_Set10 = pd.concat([Data_Set8, new_col], axis=1)
+
+"""
+Dummy Variable/Coding
+
+used to give meaning to the machine e.g strings to pattern of numbers
+"""
+# using pandas to get dummy varaible
+Data_Set11 = pd.get_dummies(Data_Set10)
+
+
+"""
+NORMALIZATION
+"""
+# using the minmaxscale method
+Data_Set12 = minmax_scale(Data_Set11, feature_range=(0, 1))
+
+# Using the normalize method
+# axis = 0 for normalizing features/axis 1 for nomarlizing each sample
+# norm = 'l2' seems to be the default value, l1 is the alternative
+
+Data_Set13 = normalize(Data_Set11, norm='l2', axis=0)
+
+# change back to Dtaframe as they change to array after normalization
+Data_Set13 = pd.DataFrame(Data_Set13, columns=['Time', 'E_Plug', 'E_Heat',
+                                               'Price', 'Temp',
+                                               'Offpeak', 'Peak'])
